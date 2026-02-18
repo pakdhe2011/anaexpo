@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Analytical Exposition RPG – SMK Fase E</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="ui">
+    <div class="brand">Analytical Exposition RPG</div>
+    <div class="stats">
+      <span>⭐ Poin: <strong id="points">0</strong></span>
+      <span>🏅 Badge: <strong id="badge">-</strong></span>
+      <span>🎯 Misi: <strong id="mission">Jelajahi sekolah & bicara dengan Guru.</strong></span>
+    </div>
+  </div>
+
+  <div id="game-wrapper">
+    <canvas id="game" width="640" height="480" aria-label="Peta game"></canvas>
+    <div id="overlay" class="hidden" role="dialog" aria-modal="true">
+      <div id="dialog">
+        <div id="dialog-content"></div>
+        <div class="dialog-actions">
+          <button id="dialog-close" aria-label="Tutup">Tutup</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz" class="hidden" role="dialog" aria-modal="true">
+      <div class="panel">
+        <h2 id="quiz-title">Tantangan</h2>
+        <div id="quiz-body"></div>
+        <div id="quiz-actions"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="help">
+    <h3>Kontrol</h3>
+    <p>Gerak: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / panah. Interaksi: <kbd>Spasi</kbd>. Reset: <kbd>R</kbd>.</p>
+    <details>
+      <summary>Tujuan Game</summary>
+      <ol>
+        <li>Temui <strong>Guru Bahasa</strong> (NPC) untuk mendapatkan misi.</li>
+        <li>Selesaikan 3 tantangan: Struktur Teks, Opini vs Fakta, Susun Paragraf.</li>
+        <li>Ujian Akhir: Tulis teks Analytical Exposition 3 paragraf (Thesis–Arguments–Reiteration).</li>
+      </ol>
+    </details>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
