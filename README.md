@@ -1,33 +1,34 @@
+# Mission: Exposition — Web Game (GitHub Pages)
 
-# Analytical Exposition RPG (SMK Fase E – Kelas 10)
-
-Game RPG edukatif berbasis web untuk melatih pemahaman **Analytical Exposition**: struktur (Thesis–Arguments–Reiteration), membedakan opini vs fakta, menyusun paragraf, dan ujian akhir menulis 3 paragraf.
-
-## Fitur
-- 🎮 Movement top-down (WASD/Arrow), interaksi (Spasi)
-- 🧠 3 tantangan kuis + **Ujian Akhir** dengan penilaian otomatis
-- 💾 Progress tersimpan (LocalStorage)
-- 🌐 Kompatibel **GitHub Pages** (statik, tanpa server)
+Game edukatif Analytical Exposition untuk kelas 10 SMK (Fase E) dengan 4 level: struktur, analisis argumen, kebahasaan, dan menulis teks.
 
 ## Struktur Proyek
 ```
-index.html
-style.css
-game.js
+.
+├── index.html
+├── style.css
+├── script.js
+└── README.md
 ```
 
-## Cara Menjalankan (Lokal)
-Buka `index.html` di browser modern (Chrome/Edge/Firefox). Tidak perlu server.
+## Jalankan Lokal
+Cukup buka `index.html` di browser modern (Chrome/Edge/Firefox). Semua fitur berjalan tanpa server.
 
 ## Deploy ke GitHub Pages
-1. Buat repository publik, unggah 3 file di atas.
-2. Settings → Pages → Source: `main` / root → Save.
-3. Akses: `https://username.github.io/nama-repo/`.
+1. **Buat repository baru** di GitHub (misal: `mission-exposition`).
+2. **Unggah** berkas `index.html`, `style.css`, `script.js`, `README.md` ke repository (drag-and-drop via web GitHub atau `git`).
+3. **Aktifkan Pages**:
+   - Masuk **Settings → Pages**.
+   - Di bagian **Deployment**, pilih **Branch**: `main` dan **Folder**: `/root` (atau `/(root)` tergantung UI).
+   - Klik **Save**.
+4. Tunggu ±1–3 menit. Situs akan tersedia di URL: `https://<username>.github.io/mission-exposition/`.
 
-## Kustomisasi Konten
-- Pertanyaan kuis & teks dapat diubah pada `game.js` di objek `content`.
-- Topik Ujian Akhir dapat diedit pada fungsi `finalExam()`.
-- Penilaian otomatis berada di `autoGrade(text)` — atur bobot/skor sesuai kebutuhan.
+> Alternatif: jika Anda menyimpan file di folder `docs/`, pilih **Folder**: `/docs` pada pengaturan Pages.
+
+## Kustomisasi
+- **Konten level**: edit konstanta `L1_DATA`, `L2_DATA`, `L3_QUESTIONS` di `script.js`.
+- **Rubrik Level 4**: ubah logika pada fungsi `scoreLevel4()`.
+- **Poin & Badge**: atur di `recordScore()`.
 
 ## Lisensi
-Gunakan bebas untuk tujuan edukasi.
+Proyek ini dirilis untuk tujuan pendidikan. Modifikasi dan gunakan bebas dalam kelas.
