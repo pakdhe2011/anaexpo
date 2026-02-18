@@ -1,55 +1,199 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Analytical Exposition RPG – SMK Fase E</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission: Exposition — Game Edukatif Fase E (Kelas 10 SMK)</title>
+  <meta name="description" content="Game edukatif Analytical Exposition 4 level untuk kelas 10 SMK (Fase E)." />
+  style.css
 </head>
 <body>
-  <div id="ui">
-    <div class="brand">Analytical Exposition RPG</div>
-    <div class="stats">
-      <span>⭐ Poin: <strong id="points">0</strong></span>
-      <span>🏅 Badge: <strong id="badge">-</strong></span>
-      <span>🎯 Misi: <strong id="mission">Jelajahi sekolah & bicara dengan Guru.</strong></span>
+  <header>
+    <div class="brand">
+      <div class="logo">ME</div>
+      <h1>Mission: Exposition</h1>
     </div>
-  </div>
+    <nav>
+      <button class="nav-btn" data-target="#home">Beranda</button>
+      <button class="nav-btn" data-target="#level1">Level 1</button>
+      <button class="nav-btn" data-target="#level2">Level 2</button>
+      <button class="nav-btn" data-target="#level3">Level 3</button>
+      <button class="nav-btn" data-target="#level4">Level 4</button>
+      <button class="nav-btn" data-target="#achievements">Poin & Badge</button>
+    </nav>
+  </header>
 
-  <div id="game-wrapper">
-    <canvas id="game" width="640" height="480" aria-label="Peta game"></canvas>
-    <div id="overlay" class="hidden" role="dialog" aria-modal="true">
-      <div id="dialog">
-        <div id="dialog-content"></div>
-        <div class="dialog-actions">
-          <button id="dialog-close" aria-label="Tutup">Tutup</button>
+  <main>
+    <section id="home" class="view active">
+      <div class="hero">
+        <h2>Game Analytical Exposition — Fase E</h2>
+        <p>Asah kemampuanmu mengenali struktur, menganalisis argumen, menguasai kebahasaan, dan menyusun <em>Analytical Exposition</em> yang solid melalui 4 level yang menantang.</p>
+        <div class="cta">
+          <input id="playerName" type="text" placeholder="Nama pemain (opsional)" />
+          <button id="startBtn">Mulai Petualangan</button>
         </div>
       </div>
-    </div>
 
-    <div id="quiz" class="hidden" role="dialog" aria-modal="true">
-      <div class="panel">
-        <h2 id="quiz-title">Tantangan</h2>
-        <div id="quiz-body"></div>
-        <div id="quiz-actions"></div>
+      <div class="mentor">
+        <div class="avatar">AI</div>
+        <div class="bubble">
+          Halo! Aku mentor-mu. Mulai dari Level 1 dulu ya: pahami struktur <strong>Thesis – Arguments – Reiteration</strong>. Semangat!
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div id="help">
-    <h3>Kontrol</h3>
-    <p>Gerak: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / panah. Interaksi: <kbd>Spasi</kbd>. Reset: <kbd>R</kbd>.</p>
-    <details>
-      <summary>Tujuan Game</summary>
-      <ol>
-        <li>Temui <strong>Guru Bahasa</strong> (NPC) untuk mendapatkan misi.</li>
-        <li>Selesaikan 3 tantangan: Struktur Teks, Opini vs Fakta, Susun Paragraf.</li>
-        <li>Ujian Akhir: Tulis teks Analytical Exposition 3 paragraf (Thesis–Arguments–Reiteration).</li>
-      </ol>
-    </details>
-  </div>
+      <div class="cards">
+        <div class="card">
+          <h3>Level 1 — Identification Quest</h3>
+          <p>Drag & drop paragraf ke kategori struktur: Thesis, Arguments, Reiteration.</p>
+        </div>
+        <div class="card">
+          <h3>Level 2 — Argument Hunt</h3>
+          <p>Bedakan <em>klaim</em>, <em>alasan</em>, dan <em>bukti</em> dengan tepat dan cepat.</p>
+        </div>
+        <div class="card">
+          <h3>Level 3 — Language Lab</h3>
+          <p>Uji grammar: <em>simple present</em>, <em>modals</em>, dan <em>internal conjunction</em>.</p>
+        </div>
+        <div class="card">
+          <h3>Level 4 — Build Your Exposition</h3>
+          <p>Tulis teks lengkap: Thesis → 3 Arguments → Reiteration. Dapatkan penilaian otomatis.</p>
+        </div>
+      </div>
+    </section>
 
-  <script src="game.js"></script>
+    <!-- LEVEL 1 -->
+    <section id="level1" class="view">
+      <h2>Level 1 — Identification Quest</h2>
+      <p class="subtitle">Tarik paragraf ke kotak struktur yang tepat.</p>
+
+      <div class="board">
+        <div class="left">
+          <h3>Paragraf</h3>
+          <div id="l1-source" class="stack"></div>
+          <div class="controls">
+            <button id="l1-reset">Reset</button>
+            <button id="l1-check" class="primary">Cek Jawaban</button>
+          </div>
+        </div>
+        <div class="right">
+          <div class="zones">
+            <div class="dropzone" data-zone="Thesis">
+              <h4>Thesis</h4>
+              <div class="slot" data-accept="Thesis"></div>
+            </div>
+            <div class="dropzone" data-zone="Arguments">
+              <h4>Arguments</h4>
+              <div class="slot" data-accept="Arguments"></div>
+            </div>
+            <div class="dropzone" data-zone="Reiteration">
+              <h4>Reiteration</h4>
+              <div class="slot" data-accept="Reiteration"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="l1-feedback" class="feedback"></div>
+    </section>
+
+    <!-- LEVEL 2 -->
+    <section id="level2" class="view">
+      <h2>Level 2 — Argument Hunt</h2>
+      <p class="subtitle">Klasifikasikan tiap pernyataan menjadi: <strong>Klaim</strong>, <strong>Alasan</strong>, atau <strong>Bukti</strong>.</p>
+
+      <div id="l2-list" class="list"></div>
+
+      <div class="controls">
+        <button id="l2-reset">Reset</button>
+        <button id="l2-check" class="primary">Cek Jawaban</button>
+      </div>
+
+      <div id="l2-feedback" class="feedback"></div>
+    </section>
+
+    <!-- LEVEL 3 -->
+    <section id="level3" class="view">
+      <h2>Level 3 — Language Lab</h2>
+      <p class="subtitle">Pilih jawaban grammar yang paling tepat.</p>
+
+      <div id="l3-quiz" class="quiz"></div>
+      <div class="controls">
+        <button id="l3-reset">Reset</button>
+        <button id="l3-check" class="primary">Cek Jawaban</button>
+      </div>
+      <div id="l3-feedback" class="feedback"></div>
+    </section>
+
+    <!-- LEVEL 4 -->
+    <section id="level4" class="view">
+      <h2>Level 4 — Build Your Exposition</h2>
+      <p class="subtitle">Susun teks Analytical Exposition lengkap berdasarkan topik yang dipilih.</p>
+
+      <div class="topic">
+        <label for="topicSelect">Pilih topik:</label>
+        <select id="topicSelect">
+          <option value="tech-access">Sekolah sebaiknya menyediakan akses teknologi yang lebih luas</option>
+          <option value="uniform-policy">Kebijakan seragam sekolah perlu ditinjau kembali</option>
+          <option value="vocational-internship">Magang industri wajib meningkatkan kesiapan kerja</option>
+        </select>
+      </div>
+
+      <form id="l4-form" class="compose" onsubmit="return false;">
+        <label>Thesis
+          <textarea id="l4-thesis" rows="3" placeholder="Tuliskan pernyataan pendapat umum (thesis)..."></textarea>
+        </label>
+        <div class="args">
+          <label>Argument 1
+            <textarea id="l4-arg1" rows="3" placeholder="Alasan/argumen yang mendukung..."></textarea>
+          </label>
+          <label>Argument 2
+            <textarea id="l4-arg2" rows="3" placeholder="Alasan/argumen yang mendukung..."></textarea>
+          </label>
+          <label>Argument 3
+            <textarea id="l4-arg3" rows="3" placeholder="Alasan/argumen yang mendukung..."></textarea>
+          </label>
+        </div>
+        <label>Reiteration
+          <textarea id="l4-reit" rows="3" placeholder="Penegasan kembali posisi (reiteration)..."></textarea>
+        </label>
+      </form>
+
+      <div class="controls">
+        <button id="l4-reset">Reset</button>
+        <button id="l4-check" class="primary">Cek & Nilai</button>
+        <button id="l4-export">Ekspor .txt</button>
+      </div>
+
+      <div id="l4-feedback" class="feedback"></div>
+    </section>
+
+    <!-- Achievements / Points -->
+    <section id="achievements" class="view">
+      <h2>Poin & Badge</h2>
+      <div class="score-panel">
+        <div class="scorebox">
+          <div>Total Poin</div>
+          <div id="totalPoints" class="big">0</div>
+        </div>
+        <div class="scorebox">
+          <div>Badge</div>
+          <div id="badges" class="badges"></div>
+        </div>
+      </div>
+      <h3>Riwayat Skor</h3>
+      <table id="historyTable">
+        <thead>
+          <tr><th>Level</th><th>Skor</th><th>Tanggal</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Mission: Exposition — Dibuat untuk pembelajaran Analytical Exposition Kelas 10 SMK (Fase E).</p>
+  </footer>
+
+  script.js</script>
 </body>
 </html>
