@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mission: Exposition — Game Edukatif Fase E (Kelas 10 SMK)</title>
   <meta name="description" content="Game edukatif Analytical Exposition 4 level untuk kelas 10 SMK (Fase E)." />
-  style.css
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
@@ -37,7 +38,7 @@
       <div class="mentor">
         <div class="avatar">AI</div>
         <div class="bubble">
-          Halo! Aku mentor-mu. Mulai dari Level 1 dulu ya: pahami struktur <strong>Thesis – Arguments – Reiteration</strong>. Semangat!
+          Halo! Aku mentor-mu. Kini ada <b>timer</b> & <b>streak bonus</b> juga. Mulai dari Level 1 dulu ya!
         </div>
       </div>
 
@@ -52,11 +53,11 @@
         </div>
         <div class="card">
           <h3>Level 3 — Language Lab</h3>
-          <p>Uji grammar: <em>simple present</em>, <em>modals</em>, dan <em>internal conjunction</em>.</p>
+          <p>Uji grammar: <em>simple present</em>, <em>modals</em>, <em>internal conjunction</em>.</p>
         </div>
         <div class="card">
           <h3>Level 4 — Build Your Exposition</h3>
-          <p>Tulis teks lengkap: Thesis → 3 Arguments → Reiteration. Dapatkan penilaian otomatis.</p>
+          <p>Tulis teks lengkap dan raih <em>time bonus</em> bila cepat.</p>
         </div>
       </div>
     </section>
@@ -65,6 +66,10 @@
     <section id="level1" class="view">
       <h2>Level 1 — Identification Quest</h2>
       <p class="subtitle">Tarik paragraf ke kotak struktur yang tepat.</p>
+      <div class="meta">
+        <div class="timer" id="l1-timer">⏱ 00:00</div>
+        <div class="streak" id="l1-streak">🔥 Streak: 0 | Best: 0</div>
+      </div>
 
       <div class="board">
         <div class="left">
@@ -100,6 +105,10 @@
     <section id="level2" class="view">
       <h2>Level 2 — Argument Hunt</h2>
       <p class="subtitle">Klasifikasikan tiap pernyataan menjadi: <strong>Klaim</strong>, <strong>Alasan</strong>, atau <strong>Bukti</strong>.</p>
+      <div class="meta">
+        <div class="timer" id="l2-timer">⏱ 00:00</div>
+        <div class="streak" id="l2-streak">🔥 Streak: 0 | Best: 0</div>
+      </div>
 
       <div id="l2-list" class="list"></div>
 
@@ -115,6 +124,10 @@
     <section id="level3" class="view">
       <h2>Level 3 — Language Lab</h2>
       <p class="subtitle">Pilih jawaban grammar yang paling tepat.</p>
+      <div class="meta">
+        <div class="timer" id="l3-timer">⏱ 00:00</div>
+        <div class="streak" id="l3-streak">🔥 Streak: 0 | Best: 0</div>
+      </div>
 
       <div id="l3-quiz" class="quiz"></div>
       <div class="controls">
@@ -128,6 +141,10 @@
     <section id="level4" class="view">
       <h2>Level 4 — Build Your Exposition</h2>
       <p class="subtitle">Susun teks Analytical Exposition lengkap berdasarkan topik yang dipilih.</p>
+      <div class="meta">
+        <div class="timer" id="l4-timer">⏱ 00:00</div>
+        <div class="streak" id="l4-streak">⚡ Time Bonus aktif</div>
+      </div>
 
       <div class="topic">
         <label for="topicSelect">Pilih topik:</label>
@@ -194,6 +211,6 @@
     <p>© 2026 Mission: Exposition — Dibuat untuk pembelajaran Analytical Exposition Kelas 10 SMK (Fase E).</p>
   </footer>
 
-  script.js</script>
+  <script src="script.js" defer></script>
 </body>
 </html>

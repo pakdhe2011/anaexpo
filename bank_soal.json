@@ -1,0 +1,168 @@
+{
+  "settings": {
+    "timer": {
+      "level1": 480,
+      "level2": 480,
+      "level3": 600,
+      "level4": 600
+    },
+    "streakBonusPerBest": 4,
+    "timeBonusPer10s": 2
+  },
+  "level1": [
+    {
+      "id": "p1",
+      "text": "Online learning offers flexibility for students to manage their time effectively.",
+      "tag": "Thesis"
+    },
+    {
+      "id": "p2",
+      "text": "Firstly, students can access materials anytime which increases learning autonomy.",
+      "tag": "Arguments"
+    },
+    {
+      "id": "p3",
+      "text": "Moreover, digital platforms provide interactive tools that maintain engagement.",
+      "tag": "Arguments"
+    },
+    {
+      "id": "p4",
+      "text": "Therefore, wider implementation of online learning will enhance outcomes if supported properly.",
+      "tag": "Reiteration"
+    }
+  ],
+  "level2": [
+    {
+      "id": "s1",
+      "text": "Schools should reduce paper usage to support sustainability.",
+      "tag": "Klaim"
+    },
+    {
+      "id": "s2",
+      "text": "Recycling bins in every class decreased waste volume by 25% last semester.",
+      "tag": "Bukti"
+    },
+    {
+      "id": "s3",
+      "text": "Many assignments can be submitted digitally without reducing quality of feedback.",
+      "tag": "Alasan"
+    },
+    {
+      "id": "s4",
+      "text": "A survey of 300 students shows 72% prefer digital handouts.",
+      "tag": "Bukti"
+    },
+    {
+      "id": "s5",
+      "text": "Providing tablets for worksheets will cut printing costs in the long term.",
+      "tag": "Alasan"
+    },
+    {
+      "id": "s6",
+      "text": "The school must provide healthier canteen options.",
+      "tag": "Klaim"
+    },
+    {
+      "id": "s7",
+      "text": "Nutrition guidelines recommend reducing sugar and trans fat in students' meals.",
+      "tag": "Bukti"
+    },
+    {
+      "id": "s8",
+      "text": "Healthier meals can improve students' concentration and energy levels.",
+      "tag": "Alasan"
+    },
+    {
+      "id": "s9",
+      "text": "In 2024, School Y reported 18% fewer sick days after menu improvements.",
+      "tag": "Bukti"
+    },
+    {
+      "id": "s10",
+      "text": "Extending canteen hours helps students with tight schedules.",
+      "tag": "Alasan"
+    }
+  ],
+  "level3": [
+    {
+      "id": "q1",
+      "text": "(Simple Present) Education __ social mobility.",
+      "choices": [
+        "supports",
+        "supported",
+        "has supported"
+      ],
+      "answer": "supports"
+    },
+    {
+      "id": "q2",
+      "text": "(Modal) Students __ develop digital literacy to succeed in modern workplaces.",
+      "choices": [
+        "should",
+        "could",
+        "might"
+      ],
+      "answer": "should"
+    },
+    {
+      "id": "q3",
+      "text": "(Conjunction) __, schools need strong internet to run blended learning.",
+      "choices": [
+        "Therefore",
+        "However",
+        "Meanwhile"
+      ],
+      "answer": "Therefore"
+    },
+    {
+      "id": "q4",
+      "text": "(Evaluative) It is __ that practical projects enhance problem-solving.",
+      "choices": [
+        "clear",
+        "unlikely",
+        "uncertain"
+      ],
+      "answer": "clear"
+    },
+    {
+      "id": "q5",
+      "text": "(Simple Present) Career guidance __ students choose suitable pathways.",
+      "choices": [
+        "helps",
+        "helped",
+        "is helping"
+      ],
+      "answer": "helps"
+    },
+    {
+      "id": "q6",
+      "text": "(Modal) Schools __ provide internships for vocational students.",
+      "choices": [
+        "must",
+        "may",
+        "could"
+      ],
+      "answer": "must"
+    },
+    {
+      "id": "q7",
+      "text": "(Conjunction) __, not all students have devices; lending programs are needed.",
+      "choices": [
+        "However",
+        "Moreover",
+        "Consequently"
+      ],
+      "answer": "However"
+    },
+    {
+      "id": "q8",
+      "text": "(Evaluative) It is __ that teacher training improves classroom technology use.",
+      "choices": [
+        "evident",
+        "rare",
+        "impossible"
+      ],
+      "answer": "evident"
+    }
+  ]
+}
