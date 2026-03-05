@@ -1,288 +1,89 @@
-// Mission: Exposition — Vanilla JS SPA
-// Penyimpanan sederhana
+// Recount Quest — SMK Fase E
+// Deep Learning Method: Membangun pemahaman melalui interaksi dan refleksi.
+
 const store = {
-  key: 'me_game_state_v1',
+  key: 'recount_quest_v1',
   read() {
-    try { return JSON.parse(localStorage.getItem(this.key)) || { playerName: '', points: 0, history: [], badges: [] }; } catch { return { playerName: '', points: 0, history: [], badges: [] }; }
+    try { return JSON.parse(localStorage.getItem(this.key)) || { playerName: '', points: 0, history: [], badges: [] }; } 
+    catch { return { playerName: '', points: 0, history: [], badges: [] }; }
   },
   write(data) { localStorage.setItem(this.key, JSON.stringify(data)); }
 };
 
 const state = store.read();
 
+// Timer
+let currentTimer = null;
+function startTimer(displayId, seconds, onTimeout) {
+  if (currentTimer) clearInterval(currentTimer);
+  const display = document.getElementById(displayId);
+  if (!display) return;
+  display.parentElement.style.color = 'var(--danger)';
+  
+  let remaining = seconds;
+  const update = () => {
+    const m = Math.floor(remaining / 60).toString().padStart(2, '0');
+    const s = (remaining % 60).toString().padStart(2, '0');
+    display.textContent = `${m}:${s}`;
+    if (remaining <= 0) {
+      clearInterval(currentTimer);
+      if (onTimeout) onTimeout();
+    }
+    remaining--;
+  };
+  update();
+  currentTimer = setInterval(update, 1000);
+}
+
+function stopTimer() {
+  if (currentTimer) clearInterval(currentTimer);
+}
+
 // Navigasi
 const navButtons = document.querySelectorAll('.nav-btn');
 const views = document.querySelectorAll('.view');
-navButtons.forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.target)));
+navButtons.forEach(btn => btn.addEventListener('click', () => {
+  navButtons.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showView(btn.dataset.target);
+}));
+
 function showView(selector) {
   views.forEach(v => v.classList.remove('active'));
   document.querySelector(selector).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  stopTimer();
+  if (selector === '#level1') renderL1();
+  else if (selector === '#level2') renderL2();
+  else if (selector === '#level3') renderL3();
+  else if (selector === '#level4') renderL4();
 }
 
 // Start
-const startBtn = document.getElementById('startBtn');
-const playerNameInput = document.getElementById('playerName');
-startBtn?.addEventListener('click', () => {
-  state.playerName = playerNameInput.value?.trim() || state.playerName || 'Pemain';
+document.getElementById('startBtn')?.addEventListener('click', () => {
+  const name = document.getElementById('playerName').value.trim();
+  if(name) state.playerName = name;
   store.write(state);
-  showView('#level1');
+  navButtons[1].click(); // Go to Level 1
 });
 
-// ------------------ Level 1 ------------------
-const L1_DATA = [
-  { id: 'p1', text: 'Schools should provide wider access to technology for students. Access to devices and internet is essential in modern learning.', tag: 'Thesis' },
-  { id: 'p2', text: 'Firstly, technology supports personalized learning so students can learn at their own pace using suitable resources.', tag: 'Arguments' },
-  { id: 'p3', text: 'Moreover, digital tools expand collaboration and creativity through project-based tasks and online discussions.', tag: 'Arguments' },
-  { id: 'p4', text: 'Therefore, increasing technology access at school will improve learning quality and prepare students for future jobs.', tag: 'Reiteration' },
-];
-
-const l1Source = document.getElementById('l1-source');
-const l1Feedback = document.getElementById('l1-feedback');
-const l1Reset = document.getElementById('l1-reset');
-const l1Check = document.getElementById('l1-check');
-
-function renderL1() {
-  l1Source.innerHTML = '';
-  shuffle([...L1_DATA]).forEach(item => {
-    const el = document.createElement('div');
-    el.className = 'draggable';
-    el.textContent = item.text;
-    el.draggable = true;
-    el.dataset.id = item.id;
-    l1Source.appendChild(el);
-  });
-  document.querySelectorAll('.slot').forEach(z => z.innerHTML = '');
-  l1Feedback.className = 'feedback'; l1Feedback.innerHTML='';
-}
-
+// Helper
 function shuffle(arr){
   for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
   return arr;
 }
-
-// Drag & Drop listeners (delegated)
-let dragged = null;
-
-document.addEventListener('dragstart', e => {
-  if (e.target.classList.contains('draggable')) {
-    dragged = e.target; e.target.classList.add('dragging');
-  }
-});
-
-document.addEventListener('dragend', e => { if (dragged) dragged.classList.remove('dragging'); dragged = null; });
-
-document.querySelectorAll('.slot, #l1-source').forEach(zone => {
-  zone.addEventListener('dragover', e => { e.preventDefault(); });
-  zone.addEventListener('drop', e => { e.preventDefault(); if (dragged) zone.appendChild(dragged); });
-});
-
-l1Reset?.addEventListener('click', renderL1);
-
-l1Check?.addEventListener('click', () => {
-  // Validate
-  let correct = 0, total = L1_DATA.length;
-  const zoneMap = {
-    Thesis: document.querySelector('.dropzone[data-zone="Thesis"] .slot'),
-    Arguments: document.querySelector('.dropzone[data-zone="Arguments"] .slot'),
-    Reiteration: document.querySelector('.dropzone[data-zone="Reiteration"] .slot')
-  };
-  const idToTag = Object.fromEntries(L1_DATA.map(x => [x.id, x.tag]));
-  Object.entries(zoneMap).forEach(([zone, slot]) => {
-    [...slot.children].forEach(el => {
-      const id = el.dataset.id;
-      const ok = idToTag[id] === zone;
-      el.style.borderColor = ok ? '#166534' : '#7f1d1d';
-      if (ok) correct++;
-    });
-  });
-  const score = Math.round((correct / total) * 100);
-  showFeedback(l1Feedback, score >= 75, `Skor Level 1: <b>${score}</b>. ${score>=75? 'Mantap! Struktur dikenali dengan baik.' : 'Coba lagi ya. Perhatikan perbedaan Thesis/Arguments/Reiteration.'}`);
-  recordScore(1, score);
-});
-
-renderL1();
-
-// ------------------ Level 2 ------------------
-const L2_DATA = [
-  { id: 's1', text: 'Schools should extend library hours for students.', tag: 'Klaim' },
-  { id: 's2', text: 'Many students cannot study at home due to limited space and distractions.', tag: 'Alasan' },
-  { id: 's3', text: 'A survey of 200 students shows 67% prefer evening access to the library.', tag: 'Bukti' },
-  { id: 's4', text: 'Longer hours support equal learning opportunities.', tag: 'Alasan' },
-  { id: 's5', text: 'In 2025, school X reported a 15% rise in reading rates after extending hours.', tag: 'Bukti' },
-];
-
-const L2_OPTIONS = ['Klaim','Alasan','Bukti'];
-const l2List = document.getElementById('l2-list');
-const l2Feedback = document.getElementById('l2-feedback');
-const l2Reset = document.getElementById('l2-reset');
-const l2Check = document.getElementById('l2-check');
-
-function renderL2(){
-  l2List.innerHTML='';
-  shuffle([...L2_DATA]).forEach(item => {
-    const row = document.createElement('div'); row.className='item';
-    const span = document.createElement('span'); span.textContent=item.text; row.appendChild(span);
-    const sel = document.createElement('select'); sel.dataset.id=item.id;
-    sel.innerHTML = '<option value="">— pilih —</option>' + L2_OPTIONS.map(o => `<option>${o}</option>`).join('');
-    row.appendChild(sel);
-    l2List.appendChild(row);
-  });
-  l2Feedback.className='feedback'; l2Feedback.innerHTML='';
-}
-
-l2Reset?.addEventListener('click', renderL2);
-
-l2Check?.addEventListener('click', () => {
-  const map = Object.fromEntries(L2_DATA.map(x => [x.id,x.tag]));
-  let correct=0, total=L2_DATA.length;
-  document.querySelectorAll('#l2-list select').forEach(sel => {
-    const ok = sel.value === map[sel.dataset.id];
-    sel.style.borderColor = ok ? '#166534' : '#7f1d1d';
-    if (ok) correct++;
-  });
-  const score = Math.round((correct/total)*100);
-  showFeedback(l2Feedback, score>=75, `Skor Level 2: <b>${score}</b>. ${score>=75? 'Analisis argumen sudah solid.' : 'Cek kembali mana klaim, alasan, dan bukti.'}`);
-  recordScore(2, score);
-});
-
-renderL2();
-
-// ------------------ Level 3 ------------------
-const L3_QUESTIONS = [
-  { id:'q1', text:'(Simple Present) Education __ a fundamental right.', choices:['is','was','will be'], answer:'is' },
-  { id:'q2', text:'(Modal) Schools __ provide equal access to learning resources.', choices:['should','can','might'], answer:'should' },
-  { id:'q3', text:'(Internal conjunction) __, providing devices supports personalized learning.', choices:['Moreover','However','Finally'], answer:'Moreover' },
-  { id:'q4', text:'(Evaluative) It is __ that internet access improves research skills.', choices:['evident','rare','impossible'], answer:'evident' },
-  { id:'q5', text:'(Simple Present) Technology use __ student collaboration.', choices:['supports','supported','has supported'], answer:'supports' },
-];
-
-const l3Quiz = document.getElementById('l3-quiz');
-const l3Feedback = document.getElementById('l3-feedback');
-const l3Reset = document.getElementById('l3-reset');
-const l3Check = document.getElementById('l3-check');
-
-function renderL3(){
-  l3Quiz.innerHTML='';
-  L3_QUESTIONS.forEach(q => {
-    const box = document.createElement('div'); box.className='q';
-    const p = document.createElement('div'); p.textContent = q.text; box.appendChild(p);
-    const choices = document.createElement('div'); choices.className='choices';
-    q.choices.forEach((c,i) => {
-      const id = `${q.id}_${i}`;
-      const label = document.createElement('label');
-      label.innerHTML = `<input type="radio" name="${q.id}" value="${c}"> ${c}`;
-      choices.appendChild(label);
-    });
-    box.appendChild(choices); l3Quiz.appendChild(box);
-  });
-  l3Feedback.className='feedback'; l3Feedback.innerHTML='';
-}
-
-l3Reset?.addEventListener('click', renderL3);
-
-l3Check?.addEventListener('click', () => {
-  let correct=0, total=L3_QUESTIONS.length;
-  L3_QUESTIONS.forEach(q => {
-    const chosen = (document.querySelector(`input[name="${q.id}"]:checked`)||{}).value;
-    const ok = chosen === q.answer;
-    if (ok) correct++;
-  });
-  const score = Math.round((correct/total)*100);
-  showFeedback(l3Feedback, score>=75, `Skor Level 3: <b>${score}</b>. ${score>=75? 'Kebahasaan kamu mantap!' : 'Perkuat lagi modals, conjunction, dan simple present.'}`);
-  recordScore(3, score);
-});
-
-renderL3();
-
-// ------------------ Level 4 ------------------
-const l4Form = document.getElementById('l4-form');
-const l4Feedback = document.getElementById('l4-feedback');
-const l4Reset = document.getElementById('l4-reset');
-const l4Check = document.getElementById('l4-check');
-const l4Export = document.getElementById('l4-export');
-
-function resetL4(){
-  l4Form.reset(); l4Feedback.className='feedback'; l4Feedback.innerHTML='';
-}
-
-l4Reset?.addEventListener('click', resetL4);
-
-function scoreLevel4(){
-  const thesis = document.getElementById('l4-thesis').value.trim();
-  const a1 = document.getElementById('l4-arg1').value.trim();
-  const a2 = document.getElementById('l4-arg2').value.trim();
-  const a3 = document.getElementById('l4-arg3').value.trim();
-  const reit = document.getElementById('l4-reit').value.trim();
-
-  // Rubrik sederhana (0-100)
-  let points = 0, issues=[];
-  // Struktur
-  const hasAll = thesis && a1 && a2 && a3 && reit; points += hasAll ? 30 : 10;
-  if (!hasAll) issues.push('Struktur belum lengkap (Thesis, 3 Arguments, Reiteration).');
-
-  // Logika argumen: panjang minimal & kata penghubung internal
-  const args = [a1,a2,a3];
-  const minLenOK = args.every(x => x.split(/\s+/).length >= 8); points += minLenOK ? 20 : 8;
-  if (!minLenOK) issues.push('Perkuat argumen (min. ±8 kata per argumen).');
-
-  const conjunctions = ['firstly','secondly','moreover','therefore','however','in addition'];
-  const conjOK = args.some(x => conjunctions.some(c => x.toLowerCase().includes(c))); points += conjOK ? 15 : 5;
-  if (!conjOK) issues.push('Gunakan internal conjunction (mis. moreover, therefore).');
-
-  // Kebahasaan: simple present (indikasi kata kerja dasar), modal usage
-  const simplePresentHints = ['is','are','support','supports','improve','improves','benefit','benefits'];
-  const textAll = [thesis,a1,a2,a3,reit].join(' ').toLowerCase();
-  const spOK = simplePresentHints.some(w => textAll.includes(` ${w} `)); points += spOK ? 15 : 5;
-  if (!spOK) issues.push('Pastikan menggunakan simple present (is/are, supports, improves).');
-
-  const modalHints = ['should','must','will','can'];
-  const modalOK = modalHints.some(m => textAll.includes(` ${m} `)); points += modalOK ? 20 : 8;
-  if (!modalOK) issues.push('Gunakan modal verbs (should, must, will, can).');
-
-  points = Math.min(100, points);
-  return { score: Math.round(points), thesis, a1, a2, a3, reit, issues };
-}
-
-l4Check?.addEventListener('click', () => {
-  const res = scoreLevel4();
-  const ok = res.score >= 75;
-  const details = `Skor Level 4: <b>${res.score}</b><br>` + (res.issues.length ? '<ul>' + res.issues.map(i=>`<li>${i}</li>`).join('') + '</ul>' : '<i>Keren! Struktur, logika, dan kebahasaan sudah kuat.</i>');
-  showFeedback(l4Feedback, ok, details);
-  recordScore(4, res.score);
-});
-
-l4Export?.addEventListener('click', () => {
-  const topic = document.getElementById('topicSelect');
-  const t = topic.options[topic.selectedIndex].text;
-  const thesis = document.getElementById('l4-thesis').value.trim();
-  const a1 = document.getElementById('l4-arg1').value.trim();
-  const a2 = document.getElementById('l4-arg2').value.trim();
-  const a3 = document.getElementById('l4-arg3').value.trim();
-  const reit = document.getElementById('l4-reit').value.trim();
-
-  const content = `Topic: ${t}\n\nThesis:\n${thesis}\n\nArguments:\n1) ${a1}\n2) ${a2}\n3) ${a3}\n\nReiteration:\n${reit}\n`;
-  const blob = new Blob([content], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'analytical-exposition.txt';
-  document.body.appendChild(a); a.click(); a.remove();
-});
-
-// ------------------ Poin, Badge, History ------------------
 function showFeedback(el, ok, html){
   el.className = 'feedback show ' + (ok ? 'success' : 'error');
   el.innerHTML = html;
 }
-
 function recordScore(level, score){
   const date = new Date().toLocaleString('id-ID');
   state.points += Math.max(5, Math.round(score/10));
   state.history.unshift({ level, score, date });
-  // Badge
-  if (score >= 90 && !state.badges.includes('Gold')) state.badges.push('Gold');
-  else if (score >= 75 && !state.badges.includes('Silver')) state.badges.push('Silver');
-  else if (score >= 60 && !state.badges.includes('Bronze')) state.badges.push('Bronze');
+  if (score >= 90 && !state.badges.includes('Master')) state.badges.push('Master');
+  else if (score >= 75 && !state.badges.includes('Proficient')) state.badges.push('Proficient');
+  else if (score >= 60 && !state.badges.includes('Explorer')) state.badges.push('Explorer');
   store.write(state);
   refreshScoreUI();
 }
@@ -290,26 +91,327 @@ function recordScore(level, score){
 function refreshScoreUI(){
   const totalPoints = document.getElementById('totalPoints');
   const badges = document.getElementById('badges');
-  const tbody = document.querySelector('#historyTable tbody');
+  const tbody = document.getElementById('historyBody');
   if (totalPoints) totalPoints.textContent = state.points;
   if (badges) {
-    badges.innerHTML = '';
-    state.badges.forEach(b => {
-      const span = document.createElement('span'); span.className='badge'; span.textContent = b;
-      badges.appendChild(span);
-    });
+    badges.innerHTML = state.badges.map(b => `<span class="badge">${b}</span>`).join('');
   }
   if (tbody) {
-    tbody.innerHTML = '';
-    state.history.slice(0,20).forEach(h => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>Level ${h.level}</td><td>${h.score}</td><td>${h.date}</td>`;
-      tbody.appendChild(tr);
-    });
+    tbody.innerHTML = state.history.slice(0,10).map(h => `<tr><td>Level ${h.level}</td><td>${h.score}</td><td>${h.date}</td></tr>`).join('');
   }
 }
-
 refreshScoreUI();
 
-// Default to home visible on load
-showView('#home');
+// ------------------ Level 1: Structure ------------------
+const L1_VARIATIONS = [
+  {
+    title: 'My First Day of Industrial Attachment (PKL)',
+    data: [
+      { id: 'o1', text: 'Last year, my classmates and I went to a car manufacturing plant in Cikarang for an industrial visit.', tag: 'Orientation' },
+      { id: 'e1', text: 'First, the supervisor took us to the assembly line to see how robotic arms weld the car body.', tag: 'Events' },
+      { id: 'e2', text: 'After that, we visited the quality control section where engineers test the engine and brakes.', tag: 'Events' },
+      { id: 'r1', text: 'In conclusion, it was an eye-opening experience. I learned a lot about modern manufacturing technology.', tag: 'Reorientation' },
+    ]
+  },
+  {
+    title: 'A Visit to a Modern Server Room',
+    data: [
+      { id: 'o1', text: 'Two weeks ago, our IT class visited a modern data center in Jakarta.', tag: 'Orientation' },
+      { id: 'e1', text: 'We started by wearing anti-static jackets before entering the server room.', tag: 'Events' },
+      { id: 'e2', text: 'Next, the network engineer explained how the cooling system keeps the servers at optimal temperatures.', tag: 'Events' },
+      { id: 'r1', text: 'Overall, the visit made me realize how complex and crucial data center maintenance is.', tag: 'Reorientation' },
+    ]
+  },
+  {
+    title: 'Culinary Practice: Cooking Traditional Food',
+    data: [
+      { id: 'o1', text: 'Yesterday, the culinary arts students had a special practice session in the school kitchen.', tag: 'Orientation' },
+      { id: 'e1', text: 'First, we prepared all the ingredients like spices, vegetables, and meat.', tag: 'Events' },
+      { id: 'e2', text: 'Then, our chef instructor demonstrated how to properly sauté the spices before adding the main ingredients.', tag: 'Events' },
+      { id: 'r1', text: 'At the end of the day, we were very tired but proud of the delicious meals we cooked.', tag: 'Reorientation' },
+    ]
+  }
+];
+
+let l1_current_data = null;
+
+function renderL1() {
+  const variation = L1_VARIATIONS[Math.floor(Math.random() * L1_VARIATIONS.length)];
+  l1_current_data = variation.data;
+  document.getElementById('l1-subtitle').textContent = `Tarik potongan teks ke kotak struktur yang tepat. Teks: "${variation.title}"`;
+  
+  const source = document.getElementById('l1-source');
+  source.innerHTML = '';
+  shuffle([...l1_current_data]).forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'draggable';
+    el.textContent = item.text;
+    el.draggable = true;
+    el.dataset.id = item.id;
+    source.appendChild(el);
+  });
+  document.querySelectorAll('.slot').forEach(z => z.innerHTML = '');
+  document.getElementById('l1-feedback').className = 'feedback';
+  
+  startTimer('l1-timer', 90, () => {
+    document.getElementById('l1-check').click();
+    showFeedback(document.getElementById('l1-feedback'), false, `Waktu Habis!`);
+  });
+}
+
+let dragged = null;
+document.addEventListener('dragstart', e => { if (e.target.classList.contains('draggable')) { dragged = e.target; e.target.classList.add('dragging'); }});
+document.addEventListener('dragend', e => { if (dragged) dragged.classList.remove('dragging'); dragged = null; });
+document.querySelectorAll('.slot, #l1-source').forEach(zone => {
+  zone.addEventListener('dragover', e => e.preventDefault());
+  zone.addEventListener('drop', e => { e.preventDefault(); if (dragged) zone.appendChild(dragged); });
+});
+
+document.getElementById('l1-reset')?.addEventListener('click', renderL1);
+document.getElementById('l1-check')?.addEventListener('click', () => {
+  stopTimer();
+  let correct = 0;
+  const map = Object.fromEntries(l1_current_data.map(x => [x.id, x.tag]));
+  ['Orientation', 'Events', 'Reorientation'].forEach(zone => {
+    const slot = document.querySelector(`.dropzone[data-zone="${zone}"] .slot`);
+    [...slot.children].forEach(el => {
+      const ok = map[el.dataset.id] === zone;
+      el.style.borderColor = ok ? 'var(--success)' : 'var(--danger)';
+      if(ok) correct++;
+    });
+  });
+  const score = Math.round((correct / l1_current_data.length) * 100);
+  showFeedback(document.getElementById('l1-feedback'), score >= 75, `Skor L1: <b>${score}</b>. ${score>=75?'Struktur berhasil dipetakan!':'Ada potongan yang salah tempat.'}`);
+  recordScore('1 (Structure)', score);
+});
+renderL1();
+
+// ------------------ Level 2: Sequence ------------------
+const L2_VARIATIONS = [
+  {
+    title: 'Workshop Internship',
+    data: [
+      { id: 's1', text: 'Yesterday morning, I arrived at the workshop for my first day of internship.', order: 1 },
+      { id: 's2', text: 'First, the senior mechanic introduced me to the tools and safety gear.', order: 2 },
+      { id: 's3', text: 'Then, I helped him change the oil and replace the brake pads of a client\'s car.', order: 3 },
+      { id: 's4', text: 'After lunch break, I learned how to use the diagnostic scanner tool.', order: 4 },
+      { id: 's5', text: 'Finally, I cleaned up the workspace before going home at 4 PM.', order: 5 },
+      { id: 's6', text: 'It was exhausting, but I felt proud to gain real-world practical skills.', order: 6 }
+    ]
+  },
+  {
+    title: 'Hotel Reception Training',
+    data: [
+      { id: 's1', text: 'On Monday, I started my on-the-job training at the front desk of a busy hotel.', order: 1 },
+      { id: 's2', text: 'First, the manager taught me how to greet guests politely and handle reservations.', order: 2 },
+      { id: 's3', text: 'Next, I shadowed a senior receptionist as she processed a complicated check-in.', order: 3 },
+      { id: 's4', text: 'Later in the afternoon, I successfully answered phone inquiries on my own.', order: 4 },
+      { id: 's5', text: 'Finally, I helped organize the guest records before my shift ended.', order: 5 },
+      { id: 's6', text: 'It was a challenging day, but I learned a lot about customer service.', order: 6 }
+    ]
+  },
+  {
+    title: 'Web Development Project',
+    data: [
+      { id: 's1', text: 'Last month, my team was assigned to build a school website.', order: 1 },
+      { id: 's2', text: 'First, we held a meeting to discuss the layout and user requirements.', order: 2 },
+      { id: 's3', text: 'Then, we divided the tasks; I was responsible for designing the homepage.', order: 3 },
+      { id: 's4', text: 'After writing the code, we tested the website to fix any bugs.', order: 4 },
+      { id: 's5', text: 'Finally, we presented the completed website to our teacher.', order: 5 },
+      { id: 's6', text: 'In the end, the project improved our teamwork and coding skills.', order: 6 }
+    ]
+  }
+];
+
+let l2_current_data = null;
+
+function renderL2() {
+  const variation = L2_VARIATIONS[Math.floor(Math.random() * L2_VARIATIONS.length)];
+  l2_current_data = variation.data;
+  document.getElementById('l2-subtitle').textContent = `Susunlah kalimat-kalimat berikut menjadi teks Recount yang padu. Topik: "${variation.title}"`;
+  
+  const list = document.getElementById('l2-list');
+  list.innerHTML = '';
+  shuffle([...l2_current_data]).forEach((item) => {
+    const el = document.createElement('div');
+    el.className = 'seq-item';
+    el.draggable = true;
+    el.dataset.order = item.order;
+    el.innerHTML = `<span>↕️</span> <div>${item.text}</div>`;
+    list.appendChild(el);
+  });
+  
+  let draggedSeq = null;
+  [...list.children].forEach(item => {
+    item.addEventListener('dragstart', function() { draggedSeq = this; setTimeout(() => this.style.display = 'none', 0); });
+    item.addEventListener('dragend', function() { draggedSeq = null; this.style.display = 'flex'; });
+    item.addEventListener('dragover', e => e.preventDefault());
+    item.addEventListener('dragenter', function(e) { e.preventDefault(); this.style.border = '2px dashed var(--primary)'; });
+    item.addEventListener('dragleave', function() { this.style.border = '1px solid #334155'; });
+    item.addEventListener('drop', function() {
+      this.style.border = '1px solid #334155';
+      if(draggedSeq !== this) list.insertBefore(draggedSeq, this);
+    });
+  });
+  document.getElementById('l2-feedback').className = 'feedback';
+  
+  startTimer('l2-timer', 120, () => {
+    document.getElementById('l2-check').click();
+    showFeedback(document.getElementById('l2-feedback'), false, `Waktu Habis!`);
+  });
+}
+
+document.getElementById('l2-reset')?.addEventListener('click', renderL2);
+document.getElementById('l2-check')?.addEventListener('click', () => {
+  stopTimer();
+  const list = document.getElementById('l2-list');
+  let correct = 0;
+  [...list.children].forEach((el, index) => {
+    const expected = index + 1;
+    const actual = parseInt(el.dataset.order);
+    const ok = expected === actual;
+    el.style.borderColor = ok ? 'var(--success)' : 'var(--danger)';
+    if(ok) correct++;
+  });
+  const score = Math.round((correct / l2_current_data.length) * 100);
+  showFeedback(document.getElementById('l2-feedback'), score === 100, `Skor L2: <b>${score}</b>. ${score===100?'Kronologi sempurna! Logika alur sudah kuat.':'Urutan peristiwa belum tepat, coba perhatikan kata hubung (First, Then, After that, Finally).'}`);
+  recordScore('2 (Sequence)', score);
+});
+renderL2();
+
+// ------------------ Level 3: Language ------------------
+const L3_VARIATIONS = [
+  [
+    { id: 'q1', text: 'I __ to the networking seminar last Wednesday.', choices: ['go', 'went', 'gone'], answer: 'went' },
+    { id: 'q2', text: 'The technician __ the broken motherboard successfully.', choices: ['repaired', 'repairs', 'repairing'], answer: 'repaired' },
+    { id: 'q3', text: '__ we arrived, the manager gave us a brief orientation.', choices: ['Finally', 'Next', 'When'], answer: 'When' },
+    { id: 'q4', text: 'We __ very tired, but happy with the experience.', choices: ['was', 'were', 'are'], answer: 'were' },
+    { id: 'q5', text: 'I installed the software. __, I configured the server IP address.', choices: ['After that', 'In conclusion', 'Because'], answer: 'After that' }
+  ],
+  [
+    { id: 'q1', text: 'She __ the new recipe in the kitchen yesterday.', choices: ['try', 'tries', 'tried'], answer: 'tried' },
+    { id: 'q2', text: 'They __ a great time during the industrial visit.', choices: ['have', 'has', 'had'], answer: 'had' },
+    { id: 'q3', text: 'First, I checked the engine. __, I changed the oil.', choices: ['Then', 'Before', 'When'], answer: 'Then' },
+    { id: 'q4', text: 'The presentation __ very informative and clear.', choices: ['were', 'was', 'is'], answer: 'was' },
+    { id: 'q5', text: '__, we packed our bags and went home.', choices: ['First', 'Finally', 'Next'], answer: 'Finally' }
+  ],
+  [
+    { id: 'q1', text: 'He __ the meeting because he was sick.', choices: ['missed', 'miss', 'missing'], answer: 'missed' },
+    { id: 'q2', text: 'My friends and I __ amazed by the robotic arms.', choices: ['was', 'were', 'are'], answer: 'were' },
+    { id: 'q3', text: 'We finished the project on time. __, we celebrated with a pizza.', choices: ['After that', 'First', 'Although'], answer: 'After that' },
+    { id: 'q4', text: 'The manager __ us a tour around the factory.', choices: ['give', 'gave', 'given'], answer: 'gave' },
+    { id: 'q5', text: '__ I entered the room, the seminar had already started.', choices: ['Next', 'Finally', 'When'], answer: 'When' }
+  ]
+];
+
+let l3_current_data = null;
+
+function renderL3(){
+  l3_current_data = L3_VARIATIONS[Math.floor(Math.random() * L3_VARIATIONS.length)];
+  const quiz = document.getElementById('l3-quiz');
+  quiz.innerHTML = '';
+  l3_current_data.forEach(q => {
+    const box = document.createElement('div'); box.className='quiz-q';
+    box.innerHTML = `<strong style="font-size: 1.1rem; color: var(--primary);">${q.text}</strong>`;
+    const choices = document.createElement('div'); choices.className='quiz-choices';
+    q.choices.forEach(c => {
+      choices.innerHTML += `<label><input type="radio" name="${q.id}" value="${c}"> ${c}</label>`;
+    });
+    box.appendChild(choices);
+    quiz.appendChild(box);
+  });
+  document.getElementById('l3-feedback').className = 'feedback';
+  
+  startTimer('l3-timer', 60, () => {
+    document.getElementById('l3-check').click();
+    showFeedback(document.getElementById('l3-feedback'), false, `Waktu Habis!`);
+  });
+}
+
+document.getElementById('l3-reset')?.addEventListener('click', renderL3);
+document.getElementById('l3-check')?.addEventListener('click', () => {
+  stopTimer();
+  let correct = 0;
+  l3_current_data.forEach(q => {
+    const ans = document.querySelector(`input[name="${q.id}"]:checked`)?.value;
+    if(ans === q.answer) correct++;
+  });
+  const score = Math.round((correct / l3_current_data.length) * 100);
+  showFeedback(document.getElementById('l3-feedback'), score >= 80, `Skor L3: <b>${score}</b>. ${score>=80?'Pemahaman Grammar masa lalu sangat baik!':'Masih ada yang keliru, ingat penggunaan Past Tense (V2).'}`);
+  recordScore('3 (Language)', score);
+});
+renderL3();
+
+// ------------------ Level 4: Experience (Build) ------------------
+const L4_VARIATIONS = [
+  'Ceritakan pengalaman Praktik Kerja Lapangan (PKL) yang paling berkesan.',
+  'Ceritakan pengalaman Kunjungan Industri yang pernah kamu ikuti.',
+  'Ceritakan pengalamanmu saat pertama kali merakit komputer atau membuat proyek teknologi.',
+  'Ceritakan pengalamanmu mengikuti Lomba Kompetensi Siswa (LKS).'
+];
+
+function renderL4() {
+  document.getElementById('l4-form').reset();
+  document.getElementById('l4-feedback').className = 'feedback';
+  
+  // Variasi instruksi
+  const prompt = L4_VARIATIONS[Math.floor(Math.random() * L4_VARIATIONS.length)];
+  const labelTopic = document.querySelector('.topic label');
+  if(labelTopic) labelTopic.textContent = `Tantangan Menulis: ${prompt}`;
+  
+  startTimer('l4-timer', 300, () => {
+    document.getElementById('l4-check').click();
+    showFeedback(document.getElementById('l4-feedback'), false, `Waktu Habis!`);
+  });
+}
+
+document.getElementById('l4-reset')?.addEventListener('click', renderL4);
+
+document.getElementById('l4-check')?.addEventListener('click', () => {
+  stopTimer();
+  const ori = document.getElementById('l4-ori').value.trim();
+  const ev = document.getElementById('l4-events').value.trim();
+  const reit = document.getElementById('l4-reit').value.trim();
+  
+  let score = 0;
+  let feedback = [];
+  
+  // 1. Structure (30%)
+  if(ori && ev && reit) { score += 30; } 
+  else { feedback.push('Struktur belum lengkap. Pastikan ketiga bagian terisi.'); }
+  
+  // 2. Length & Depth (Deep Learning aspect) (30%)
+  const evWords = ev.split(/\s+/).length;
+  if(evWords > 30) { score += 30; }
+  else if(evWords > 10) { score += 15; feedback.push('Events (Peristiwa) kurang detail. Elaborasi lagi apa saja yang kamu lakukan.'); }
+  else { feedback.push('Events terlalu singkat. Tuliskan lebih banyak tindakan.'); }
+
+  // 3. Language Features (Past Tense & Connectives) (40%)
+  const allText = (ori + " " + ev + " " + reit).toLowerCase();
+  const pastVerbs = ['was', 'were', 'went', 'did', 'visited', 'learned', 'saw', 'helped', 'arrived', 'started', 'finished', 'got', 'made', 'took', 'met', 'had'];
+  const connectives = ['first', 'then', 'next', 'after', 'finally', 'when', 'last'];
+  
+  const hasPastVerbs = pastVerbs.filter(v => allText.includes(` ${v} `) || allText.includes(`${v} `)).length;
+  if(hasPastVerbs >= 3) { score += 20; }
+  else { score += 5; feedback.push('Gunakan lebih banyak Action Verbs dalam bentuk Past Tense (V2) seperti went, did, visited.'); }
+  
+  const hasConn = connectives.filter(c => allText.includes(c)).length;
+  if(hasConn >= 2) { score += 20; }
+  else { score += 5; feedback.push('Gunakan Time Connectives (First, Then, After that, dll) untuk merangkai peristiwa secara kronologis.'); }
+  
+  showFeedback(document.getElementById('l4-feedback'), score >= 75, `Skor Penulisan: <b>${score}</b>.<br>` + (feedback.length ? '<ul>'+feedback.map(f=>`<li>${f}</li>`).join('')+'</ul>' : 'Luar biasa! Refleksi dan penulisan teks Recount-mu sudah sangat baik. Struktur, bahasa, dan kronologi terlihat jelas.'));
+  recordScore('4 (Reflection)', score);
+});
+
+document.getElementById('l4-export')?.addEventListener('click', () => {
+  const topic = document.getElementById('topicSelect').value;
+  const ori = document.getElementById('l4-ori').value;
+  const ev = document.getElementById('l4-events').value;
+  const reit = document.getElementById('l4-reit').value;
+  const content = `Topic: ${topic}\n\n[Orientation]\n${ori}\n\n[Events]\n${ev}\n\n[Reorientation]\n${reit}`;
+  const blob = new Blob([content], {type: 'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'My_Recount_Text.txt';
+  a.click();
+});

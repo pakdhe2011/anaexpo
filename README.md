@@ -1,34 +1,19 @@
-# Mission: Exposition — Web Game (GitHub Pages)
+# Recount Quest: Experience Lab
 
-Game edukatif Analytical Exposition untuk kelas 10 SMK (Fase E) dengan 4 level: struktur, analisis argumen, kebahasaan, dan menulis teks.
+Sebuah Game Edukatif berbasis Web untuk pembelajaran Bahasa Inggris materi **Recount Text** pada fase E (Kelas 10 SMK). Aplikasi ini dirancang menggunakan pendekatan *Deep Learning Method*, di mana siswa tidak hanya menghafal, tetapi melakukan rekonstruksi peristiwa, membangun logika urutan waktu, dan mensintesis pengalaman nyata mereka (seperti Praktik Kerja Lapangan / Kunjungan Industri) menjadi sebuah refleksi yang terstruktur.
 
-## Struktur Proyek
-```
-.
-├── index.html
-├── style.css
-├── script.js
-└── README.md
-```
+## Fitur & Level Pembelajaran (Deep Learning Workflow)
+1. **Level 1 — Structure Lab**: Melatih identifikasi struktur makro (Orientation, Events, Reorientation) melalui aktivitas *drag and drop*.
+2. **Level 2 — Time Sequence**: Membangun pemahaman alur logis dengan menyusun acak urutan peristiwa secara kronologis (*chronological sequence*).
+3. **Level 3 — Language Forge**: Mengasah akurasi tata bahasa spesifik Recount Text (*Past Tense, Action Verbs, Time Connectives*).
+4. **Level 4 — Deep Reflection (Build)**: Membimbing siswa untuk memproduksi (sintesis) teks pengalaman nyata mereka secara utuh dengan asesmen instan.
 
-## Jalankan Lokal
-Cukup buka `index.html` di browser modern (Chrome/Edge/Firefox). Semua fitur berjalan tanpa server.
+## Teknologi
+- HTML5, CSS3 (Vanilla), JavaScript (ES6+).
+- *No framework required*, sangat ringan dan dapat berjalan secara luring.
 
-## Deploy ke GitHub Pages
-1. **Buat repository baru** di GitHub (misal: `mission-exposition`).
-2. **Unggah** berkas `index.html`, `style.css`, `script.js`, `README.md` ke repository (drag-and-drop via web GitHub atau `git`).
-3. **Aktifkan Pages**:
-   - Masuk **Settings → Pages**.
-   - Di bagian **Deployment**, pilih **Branch**: `main` dan **Folder**: `/root` (atau `/(root)` tergantung UI).
-   - Klik **Save**.
-4. Tunggu ±1–3 menit. Situs akan tersedia di URL: `https://<username>.github.io/mission-exposition/`.
+## Cara Menjalankan
+Buka berkas `index.html` menggunakan peramban modern (Chrome, Edge, Firefox).
 
-> Alternatif: jika Anda menyimpan file di folder `docs/`, pilih **Folder**: `/docs` pada pengaturan Pages.
-
-## Kustomisasi
-- **Konten level**: edit konstanta `L1_DATA`, `L2_DATA`, `L3_QUESTIONS` di `script.js`.
-- **Rubrik Level 4**: ubah logika pada fungsi `scoreLevel4()`.
-- **Poin & Badge**: atur di `recordScore()`.
-
-## Lisensi
-Proyek ini dirilis untuk tujuan pendidikan. Modifikasi dan gunakan bebas dalam kelas.
+## Lingkungan SMK
+Topik dan kosakata yang digunakan disesuaikan dengan lingkungan Vokasional (SMK), seperti perbengkelan, manufaktur, jaringan (TKJ), dll., yang membuat teks sangat relevan (*meaningful learning*) bagi siswa SMK Fase E Kurikulum Merdeka.
